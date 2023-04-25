@@ -5,6 +5,7 @@ import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
+import java.util.Objects;
 
 @Path("fibonacci")
 public class FibonacciService {
@@ -33,7 +34,7 @@ public class FibonacciService {
     @Path("/next")
     @Produces(MediaType.TEXT_PLAIN)
     public Response nextFibonacci(@CookieParam("FibonacciIndex") Cookie cookie) {
-        if (cookie == null) {
+        if (cookie == null || Objects.equals(cookie.getValue(), "RESET")) {
             NewCookie fibonacciIndex = new NewCookie("FibonacciIndex", "0");
             Response.ResponseBuilder rb = Response.ok(String.format("fibonacci(%s) = %s", 0, getFibonacci(0)));
 
@@ -44,6 +45,16 @@ public class FibonacciService {
 
         NewCookie fibonacciIndex = new NewCookie("FibonacciIndex", String.valueOf(nextIndex));
         Response.ResponseBuilder rb = Response.ok(String.format("fibonacci(%s) = %s", nextIndex, getFibonacci(nextIndex)));
+
+        return rb.cookie(fibonacciIndex).build();
+    }
+
+    @GET
+    @Path("/reset")
+    @Produces(MediaType.TEXT_PLAIN)
+    public Response resetFibonacci(@CookieParam("FibonacciIndex") Cookie cookie) {
+        NewCookie fibonacciIndex = new NewCookie("FibonacciIndex", "RESET");
+        Response.ResponseBuilder rb = Response.ok("Reset ok");
 
         return rb.cookie(fibonacciIndex).build();
     }
