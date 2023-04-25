@@ -11,7 +11,6 @@ import javax.ws.rs.core.MediaType;
 public class HalloWeltService {
 	@GET
 	@Produces(MediaType.TEXT_PLAIN)
-	@Path("halloText")
 	public String halloText(@DefaultValue("Welt") @QueryParam("name") String name) {
 		String answer = "Hallo " + name + "!";
 		return answer;
@@ -19,7 +18,6 @@ public class HalloWeltService {
 
 	@GET
 	@Produces(MediaType.TEXT_HTML)
-	@Path("halloHtml")
 	public String halloHtml(@DefaultValue("Welt") @QueryParam(value = "name") String name) {
 		String answer = "Hallo " + name + "!";
 		return "<html><title>HelloWorld</title><body><h2>Html: " + answer + "</h2></body></html>";
