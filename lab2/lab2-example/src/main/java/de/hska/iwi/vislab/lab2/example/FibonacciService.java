@@ -32,7 +32,7 @@ public class FibonacciService {
 
     @GET
     @Path("/next")
-    @Produces(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.TEXT_HTML)
     public Response nextFibonacci(@CookieParam("FibonacciIndex") Cookie cookie) {
         if (cookie == null || Objects.equals(cookie.getValue(), "RESET")) {
             NewCookie fibonacciIndex = new NewCookie("FibonacciIndex", "0");
@@ -44,17 +44,17 @@ public class FibonacciService {
         int nextIndex = Integer.parseInt(cookie.getValue()) + 1;
 
         NewCookie fibonacciIndex = new NewCookie("FibonacciIndex", String.valueOf(nextIndex));
-        Response.ResponseBuilder rb = Response.ok(String.format("fibonacci(%s) = %s", nextIndex, getFibonacci(nextIndex)));
+        Response.ResponseBuilder rb = Response.ok(String.format("<p>fibonacci(%s) = %s</p><p><a href=\"/fibonacci/reset\">Reset</a></p>", nextIndex, getFibonacci(nextIndex)));
 
         return rb.cookie(fibonacciIndex).build();
     }
 
     @GET
     @Path("/reset")
-    @Produces(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.TEXT_HTML)
     public Response resetFibonacci(@CookieParam("FibonacciIndex") Cookie cookie) {
         NewCookie fibonacciIndex = new NewCookie("FibonacciIndex", "RESET");
-        Response.ResponseBuilder rb = Response.ok("Reset ok");
+        Response.ResponseBuilder rb = Response.ok("<p>Reset ok</p><p><a href=\"/fibonacci/next\">Start again</a></p>");
 
         return rb.cookie(fibonacciIndex).build();
     }
