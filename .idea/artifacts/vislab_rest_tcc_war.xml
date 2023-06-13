@@ -1,0 +1,14 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="vislab-rest-tcc:war">
+    <output-path>$PROJECT_DIR$/lab4/lab4-base/target</output-path>
+    <properties id="maven-jee-properties">
+      <options>
+        <module>vislab-rest-tcc</module>
+        <packaging>war</packaging>
+      </options>
+    </properties>
+    <root id="archive" name="vislab-rest-tcc-0.0.1-SNAPSHOT.war">
+      <element id="artifact" artifact-name="vislab-rest-tcc:war exploded" />
+    </root>
+  </artifact>
+</component>
