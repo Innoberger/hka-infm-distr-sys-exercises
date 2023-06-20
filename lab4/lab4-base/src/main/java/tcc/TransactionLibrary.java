@@ -14,7 +14,7 @@ public class TransactionLibrary {
 
     public static void confirm(FlightReservationDoc flightReservationTry, HotelReservationDoc hotelReservationTry, WebTarget baseTarget) throws MalformedURLException {
         WebTarget flightTarget = getWebTarget(flightReservationTry.getUrl(), baseTarget);
-        WebTarget hotelTarget = getWebTarget(hotelReservationTry.getUrl() + "2", baseTarget);
+        WebTarget hotelTarget = getWebTarget(hotelReservationTry.getUrl(), baseTarget);
 
         try {
             Response responseFlight = flightTarget.request().accept(MediaType.TEXT_PLAIN).put(Entity.xml(flightReservationTry));
@@ -36,17 +36,23 @@ public class TransactionLibrary {
             System.out.println("Successfully confirmed hotel");
             System.out.println("Entire booking transaction confirmed");
         } catch (BookingException e) {
-            // do rollback on exception;
-            System.out.println("Rolling back changes...");
-
-            Response flightRollback = flightTarget.request().accept(MediaType.APPLICATION_XML).delete();
-            System.out.println("Rollback of flight : HTTP " + flightRollback.getStatus());
-
-            Response hotelRollback = hotelTarget.request().accept(MediaType.APPLICATION_XML).delete();
-            System.out.println("Rollback of hotel : HTTP " + hotelRollback.getStatus());
-
-            System.out.println("Entire booking was rolled back");
+            rollback(flightReservationTry, hotelReservationTry, baseTarget);
         }
+    }
+
+    public static void rollback(FlightReservationDoc flightReservationTry, HotelReservationDoc hotelReservationTry, WebTarget baseTarget) throws MalformedURLException {
+        WebTarget flightTarget = getWebTarget(flightReservationTry.getUrl(), baseTarget);
+        WebTarget hotelTarget = getWebTarget(hotelReservationTry.getUrl(), baseTarget);
+
+        System.out.println("Rolling back changes...");
+
+        Response flightRollback = flightTarget.request().accept(MediaType.APPLICATION_XML).delete();
+        System.out.println("Rollback of flight : HTTP " + flightRollback.getStatus());
+
+        Response hotelRollback = hotelTarget.request().accept(MediaType.APPLICATION_XML).delete();
+        System.out.println("Rollback of hotel : HTTP " + hotelRollback.getStatus());
+
+        System.out.println("Entire booking was rolled back");
     }
 
     private static WebTarget getWebTarget(String url, WebTarget baseTarget) throws MalformedURLException {
