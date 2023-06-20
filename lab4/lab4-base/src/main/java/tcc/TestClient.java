@@ -11,13 +11,16 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import tcc.flight.FlightReservationDoc;
+import tcc.flight.FlightReservationList;
 import tcc.hotel.HotelReservationDoc;
+import tcc.hotel.HotelReservationList;
 
 /**
  * Simple non-transactional client. Can be used to populate the booking services
  * with some requests.
  */
 public class TestClient {
+
 	public static void main(String[] args) {
 		try {
 			Client client = ClientBuilder.newClient();
@@ -69,6 +72,15 @@ public class TestClient {
 
 			// confirm via transaction library
 			TransactionLibrary.confirm(outputFlight, outputHotel, target);
+
+			// print all flight and hotel reservations
+			Response flightsResponse = webTargetFlight.request().accept(MediaType.APPLICATION_XML).get();
+			Response hotelsResponse = webTargetHotel.request().accept(MediaType.APPLICATION_XML).get();
+
+			//System.out.println(flightsResponse.readEntity(String.class));
+
+			System.out.println("All flight reservations: " + flightsResponse.readEntity(FlightReservationList.class));
+			System.out.println("All hotel reservations: " + hotelsResponse.readEntity(HotelReservationList.class));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

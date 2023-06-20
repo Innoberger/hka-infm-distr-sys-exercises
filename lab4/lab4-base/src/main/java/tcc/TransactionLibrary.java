@@ -12,29 +12,40 @@ import java.net.URL;
 
 public class TransactionLibrary {
 
-    public static void confirm(FlightReservationDoc flightReservationTry, HotelReservationDoc hotelReservationTry, WebTarget baseTarget) throws MalformedURLException, BookingException {
+    public static void confirm(FlightReservationDoc flightReservationTry, HotelReservationDoc hotelReservationTry, WebTarget baseTarget) throws MalformedURLException {
         WebTarget flightTarget = getWebTarget(flightReservationTry.getUrl(), baseTarget);
-        WebTarget hotelTarget = getWebTarget(hotelReservationTry.getUrl(), baseTarget);
+        WebTarget hotelTarget = getWebTarget(hotelReservationTry.getUrl() + "2", baseTarget);
 
         try {
             Response responseFlight = flightTarget.request().accept(MediaType.TEXT_PLAIN).put(Entity.xml(flightReservationTry));
 
             if (responseFlight.getStatus() != 200) {
-                System.out.println("Failed : HTTP error code : " + responseFlight.getStatus());
+                System.out.println("Failed to confirm flight : HTTP " + responseFlight.getStatus());
                 throw new BookingException(BookingException.BookingError.COULD_NOT_CONFIRM);
             }
+
+            System.out.println("Successfully confirmed flight");
 
             Response responseHotel = hotelTarget.request().accept(MediaType.TEXT_PLAIN).put(Entity.xml(hotelReservationTry));
 
             if (responseHotel.getStatus() != 200) {
-                System.out.println("Failed : HTTP error code : " + responseHotel.getStatus());
+                System.out.println("Failed to confirm hotel : HTTP " + responseHotel.getStatus());
                 throw new BookingException(BookingException.BookingError.COULD_NOT_CONFIRM);
             }
+
+            System.out.println("Successfully confirmed hotel");
+            System.out.println("Entire booking transaction confirmed");
         } catch (BookingException e) {
             // do rollback on exception;
-            flightTarget.request().accept(MediaType.APPLICATION_XML).delete();
-            hotelTarget.request().accept(MediaType.APPLICATION_XML).delete();
-            throw new BookingException(BookingException.BookingError.COULD_NOT_CONFIRM);
+            System.out.println("Rolling back changes...");
+
+            Response flightRollback = flightTarget.request().accept(MediaType.APPLICATION_XML).delete();
+            System.out.println("Rollback of flight : HTTP " + flightRollback.getStatus());
+
+            Response hotelRollback = hotelTarget.request().accept(MediaType.APPLICATION_XML).delete();
+            System.out.println("Rollback of hotel : HTTP " + hotelRollback.getStatus());
+
+            System.out.println("Entire booking was rolled back");
         }
     }
 
