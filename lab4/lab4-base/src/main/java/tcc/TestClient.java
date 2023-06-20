@@ -67,6 +67,8 @@ public class TestClient {
 			HotelReservationDoc outputHotel = responseHotel.readEntity(HotelReservationDoc.class);
 			System.out.println("Output from Server: " + outputHotel);
 
+			// confirm via transaction library
+			TransactionLibrary.confirm(outputFlight, outputHotel, target);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

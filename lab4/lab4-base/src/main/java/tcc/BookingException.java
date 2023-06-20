@@ -5,7 +5,7 @@ public class BookingException extends Exception {
 	private static final long serialVersionUID = 1L;
 
 	public enum BookingError {
-		UNKNOWN_ID, CANNOT_CANCEL_CONFIRMED_BOOKING, MAX_NUM_OF_BOOKINGS, UNKNOWN
+		UNKNOWN_ID, CANNOT_CANCEL_CONFIRMED_BOOKING, MAX_NUM_OF_BOOKINGS, UNKNOWN, COULD_NOT_CONFIRM
 	}
 
 	public BookingError error;
