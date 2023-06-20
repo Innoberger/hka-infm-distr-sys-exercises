@@ -20,6 +20,11 @@ Die maximale Anzahl der Flugresreservierungen pro Tag ist in `FlightReservationS
 
 ## 4b)
 
-
+Siehe Quellcode, insbesondere `TransactionLibrary.java`.
 
 ## 4c)
+
+* _**A**tomicity:_ Es sollen entweder alle Schritte der Transaktion ausgefüllt werden, oder gar keine. Diese Implementierung erfüllt das nur insoweit, bis Timouts ungewollt überschritten werden.
+* _**C**onstistency:_ Es werden immer nur Flug- _und_ Hotelbuchung bestätigt, niemals einzeln. Der Timeout soll auch helfen. Allerdings gibt es unterschiedliche maximale Anzahl an Reservierungen an Flügen und Hotels pro Tag!
+* _**I**solation:_ Durch Locks soll sichergestellt werden, dass es nicht zu Konflikten kommt. Durch die Try-Confirmed-Architektur sind mehrere Anfragen voneinander getrennt, jedoch kann ein zweiter Client einfach die Tries eines anderen Clients confirmen oder canceln.
+* _**D**urability:_ Die Daten werden nicht permanent _auf Platte_ gespeichert, sondern nur so lange der Server läuft (also im Arbeitsspeicher).
